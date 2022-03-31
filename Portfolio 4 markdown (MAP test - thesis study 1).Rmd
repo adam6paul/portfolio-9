@@ -169,4 +169,13 @@ summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
 
 >This section will be used for me to write up what I've learned from the data analysis, as a point to reference the findings while I'm working later.
 
-We found that 
+>H1: Students who disclose in a class or small group will report higher feelings of belonging in the class and at their institution.
+
+Group disclosure was a significant predictor of belonging at both levels, but class disclosure was only a significantly negative predictor of institutional belonging!
+
+>H2: Prompting disclosure in class or in small groups will be associated with greater disclosure and greater sense of belonging at the classroom and institutional level, as well as whether the relationship between disclosure and institutional belonging is mediated by classroom belonging.
+
+Classroom prompting
+        Significantly predicted actual disclosure, but was not a significant predictor of class or institutional belonging.
+Group Prompting
+        Significantly predicted actual disclosure, but was not a significant predictor of class or institutional belonging.
