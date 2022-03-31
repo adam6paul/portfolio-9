@@ -9,9 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+> The purpose of this portfolio is to practice with data I already have and prepare for writing a path analysis, so that when I get my data I can run the analyses right away. With that in mind, this markdown has details and information for my own learning, so I can refer to it as I am writing the final version. Which, for some reason, is an earlier portfolio project. Go past me.
+
 ## Set-up
 
 The main packages I need are lavaan and lmertest, but semPlot is used to create a visual model.
+
+> Getting semPlot to work was a genuine ordeal, but it should all work now.
 
 
 library('psych')
@@ -25,61 +29,31 @@ library('OpenMx')
 library('semPlot')
 rm(list=ls())
 
+##### Bringing in the data
 
-
-
-
-> Formerly, I did this with a .sav file,as the data was cleaned using SPSS. This really disrupted the knitting for the markdown, so I tested converting to .csv
->library(haven)
->Classroom_Experiences <- read_sav("~/Master's Program Wake Forest/Research/Online Belonging/FYP materials/Classroom >Experiences Data 8-15-21.sav")
->View(Classroom_Experiences_Data_8_15_21)
+> Formerly, I did this with a .sav file,as the data was cleaned using SPSS. This really disrupted the knitting for the markdown, so I tested converting to .csv. The below code was used then.
+library(haven)
+Classroom_Experiences <- read_sav("~/Master's Program Wake Forest/Research/Online Belonging/FYP materials/Classroom >Experiences Data 8-15-21.sav")
+View(Classroom_Experiences_Data_8_15_21)
 
 ```{r bringing in data}
 Classroom_Experiences <- read.csv("~/Master's Program Wake Forest/Research/Online Belonging/FYP materials/MAP data -csv test.csv")
 View(Classroom_Experiences)
 ```
 
-## Data cleaning
+##### Data cleaning!
 
-Will need to create composite variable for prompted disclosure out of two items.
+For the purposes of Portfolio 4, I am not cleaning the data. However, in the full thesis, I will clean the data here.
 
-> Old data only had one question, so that is not done below. Will add this after finishing the path analysis code
-
-### Descriptives cleaning
-
-##### Race dummy coding
-
-##### Gender dummy coding
-
-### Variables of Interest
-
-##### Institutional belonging (belong_instit_comp4)
-
-
-##### Class belonging (belong_class_comp4)
-
-
-##### Class disclosure (cdiscl_disclose_comp3)
-
-
-##### Class prompted disclosure (cdiscl__prompt_comp2)
-
-
-#### Group disclosure (gdiscl_disclose_comp3)
-
-
-##### Group prompted disclosure (gdiscl_prompt_comp2)
-
-
-
-If I decide it's necessary, I will rename variables to make the models easy to think about here.
-
+The focus of this portfolio is ensuring that I understand how to run a path analysis and put together the code for the model, so I am using data I already cleaned.
 
 ------------------
 
 # MEDIATION MODELS
 
 ------------------
+
+> This section is information given to me by Shannon, kept here and in other path analysis portfolios so I have access to them.
 
 Reminder: Rules of thumb to evaluate goodness of fit: CFI/TLI > 0.95, RMSEA < 0.05, SRMR < 0.06  (Reference: Hu & Bentler, 1999)
 
@@ -116,15 +90,18 @@ Reminder: Rules of thumb to evaluate goodness of fit: CFI/TLI > 0.95, RMSEA < 0.
 
 ```{r model creation}
 model_1 <- ' #First direct effects
-              belong_class_comp4 ~ c*cdiscl_disclose
-              belong_wfu_comp4 ~ cdiscl_disclose
+              belong_class_comp4 ~ c*cdiscl_disclose + gender_identity_dich + race_asian
+              + race_black + race_hispanic + race_multiracial
+              
+              belong_wfu_comp4 ~ cdiscl_disclose + gender_identity_dich + race_asian +                      race_black + race_hispanic + race_multiracial
               
             #mediator for class
               cdiscl_disclose ~ a*cdiscl_prompt_discl
             
             #group direct effect
-              belong_class_comp4 ~ d*gdiscl_disclose
-              belong_wfu_comp4 ~ gdiscl_disclose
+              belong_class_comp4 ~ d*gdiscl_disclose + gender_identity_dich + race_asian +                      race_black + race_hispanic + race_multiracial
+              
+              belong_wfu_comp4 ~ gdiscl_disclose + gender_identity_dich + race_asian +                      race_black + race_hispanic + race_multiracial
               
             #mediator for group
               gdiscl_disclose ~ b*gdiscl_do_emot
@@ -134,6 +111,31 @@ model_1 <- ' #First direct effects
                 '
 ```
 
+```{r}
+model_1 <-   '  #Class Belonging direct effects
+                belong_class_comp4 ~ a*cdiscl_disclose + gender_identity_dich + race_asian 
+                + race_black + race_hispanic + race_multiracial
+                belong_class_comp4 ~ b*gdiscl_disclose
+                
+                #WFU Belonging direct effects
+                belong_wfu_comp4 ~ c*cdiscl_disclose + gender_identity_dich + race_asian 
+                + race_black + race_hispanic + race_multiracial
+                belong_wfu_comp4 ~ d*gdiscl_disclose
+                
+                #Mediator for class disclosure
+                cdiscl_disclose ~ e*cdiscl_prompt_discl
+                
+                #Mediator for group disclosure
+                gdiscl_disclose ~ f*gdiscl_do_emot
+                
+                #removing correlation between prompted disclosures
+                cdiscl_prompt_discl ~~ 0*gdiscl_do_emot 
+                '
+```
+
+
+gender_identity_dich race_asian race_black race_hispanic 
+    race_multiracial 
 
 
 ```{r testing fit}
@@ -142,11 +144,20 @@ fit <- sem(model_1, data=Classroom_Experiences)
 summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
 ```
 
-I don't like the model outputting in the smaller form, so I pulled it out of the chunk.
 
-semPaths(fit, whatLabels="par", layout="spring")
+
+> This graph is kinda hideous, but it's what I've got for now. I don't like the model outputting in the smaller form, so I will usually pull it out of the chunk. 
+
+```{r Path visualization}
+semPaths(fit, whatLabels="par", layout="tree", nodeLabels= c("Class Belonging", "WFU Belonging", "Class Disclosure", "Group Disclosure", "Group Prompted Disc", "Class Prompted Disc", "Multiracial", "Hispanic", "Black", "Asian", "Gender"),  sizeMan=12, sizeMan2=6)
+```
+
+
+>Currently unused code, but is used to ensure I can look at the original node names, so I want to keep it on hand. nCharNodes=0,
 
 #### Bootstrapping
+
+Bootstrapping is currently set to 1000 for the sake of time, not because it's what I will ultimately want to run. With the real data, I will go for 10000.
 
 #####for boot strapped 95% CIs
 
