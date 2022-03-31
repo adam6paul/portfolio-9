@@ -145,3 +145,12 @@ summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
 I don't like the model outputting in the smaller form, so I pulled it out of the chunk.
 
 semPaths(fit, whatLabels="par", layout="spring")
+
+#### Bootstrapping
+
+#####for boot strapped 95% CIs
+
+```{r bootstrapped code}
+fit <- sem(model_1, data=Classroom_Experiences, se="bootstrap", bootstrap = 1000)
+summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
+```
