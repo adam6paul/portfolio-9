@@ -1,5 +1,5 @@
 ---
-title: "Thesis study 1"
+title: "Portfolio 4 MAP test- Thesis study 1"
 author: "Adam Paul"
 date: "3/24/2022"
 output: html_document
@@ -25,12 +25,18 @@ library('OpenMx')
 library('semPlot')
 rm(list=ls())
 
-The current directory is from last semester, will need to change this for the new data
+
+
+
+
+> Formerly, I did this with a .sav file,as the data was cleaned using SPSS. This really disrupted the knitting for the markdown, so I tested converting to .csv
+>library(haven)
+>Classroom_Experiences <- read_sav("~/Master's Program Wake Forest/Research/Online Belonging/FYP materials/Classroom >Experiences Data 8-15-21.sav")
+>View(Classroom_Experiences_Data_8_15_21)
 
 ```{r bringing in data}
-library(haven)
-Classroom_Experiences <- read_sav("~/Master's Program Wake Forest/Research/Online Belonging/FYP materials/Classroom Experiences Data 8-15-21.sav")
-View(Classroom_Experiences_Data_8_15_21)
+Classroom_Experiences <- read.csv("~/Master's Program Wake Forest/Research/Online Belonging/FYP materials/MAP data -csv test.csv")
+View(Classroom_Experiences)
 ```
 
 ## Data cleaning
@@ -134,6 +140,8 @@ model_1 <- ' #First direct effects
 fit <- sem(model_1, data=Classroom_Experiences)
 
 summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
+```
+
+I don't like the model outputting in the smaller form, so I pulled it out of the chunk.
 
 semPaths(fit, whatLabels="par", layout="spring")
-```
