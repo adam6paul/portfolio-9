@@ -88,54 +88,52 @@ Reminder: Rules of thumb to evaluate goodness of fit: CFI/TLI > 0.95, RMSEA < 0.
 
 ------------------
 
-```{r model creation}
-model_1 <- ' #First direct effects
-              belong_class_comp4 ~ c*cdiscl_disclose + gender_identity_dich + race_asian
-              + race_black + race_hispanic + race_multiracial
-              
-              belong_wfu_comp4 ~ cdiscl_disclose + gender_identity_dich + race_asian +                      race_black + race_hispanic + race_multiracial
-              
-            #mediator for class
-              cdiscl_disclose ~ a*cdiscl_prompt_discl
-            
-            #group direct effect
-              belong_class_comp4 ~ d*gdiscl_disclose + gender_identity_dich + race_asian +                      race_black + race_hispanic + race_multiracial
-              
-              belong_wfu_comp4 ~ gdiscl_disclose + gender_identity_dich + race_asian +                      race_black + race_hispanic + race_multiracial
-              
-            #mediator for group
-              gdiscl_disclose ~ b*gdiscl_do_emot
-              
-            #removing correlation between prompted disclosure
-              cdiscl_prompt_discl ~~ 0*gdiscl_do_emot
-                '
-```
+##### Hypotheses
 
-```{r}
+H1: Students who disclose in a class or small group will report higher feelings of belonging in the class and at their institution.
+
+H2: Prompting disclosure in class or in small groups will be associated with greater disclosure and greater sense of belonging at the classroom and institutional level, as well as whether the relationship between disclosure and institutional belonging is mediated by classroom belonging.
+
+>These are the covariates I am including in the model:
+Gender, with female as the reference class- 
+        gender_identity_dich 
+Race, with white as the reference class- 
+        race_asian race_black race_hispanic race_multiracial 
+Classmates and group members known prior
+        classmates_know groupdesc_know_prior
+
+#### Creating the model!
+
+
+```{r model creation}
 model_1 <-   '  #Class Belonging direct effects
                 belong_class_comp4 ~ a*cdiscl_disclose + gender_identity_dich + race_asian 
-                + race_black + race_hispanic + race_multiracial
+                + race_black + race_hispanic + race_multiracial + classmates_know +                          groupdesc_know_prior
+                
                 belong_class_comp4 ~ b*gdiscl_disclose
                 
                 #WFU Belonging direct effects
                 belong_wfu_comp4 ~ c*cdiscl_disclose + gender_identity_dich + race_asian 
-                + race_black + race_hispanic + race_multiracial
+                + race_black + race_hispanic + race_multiracial + classmates_know +                          groupdesc_know_prior
+                
                 belong_wfu_comp4 ~ d*gdiscl_disclose
                 
                 #Mediator for class disclosure
                 cdiscl_disclose ~ e*cdiscl_prompt_discl
+                belong_class_comp4 ~ cdiscl_prompt_discl
+                belong_wfu_comp4 ~ cdiscl_prompt_discl
                 
                 #Mediator for group disclosure
                 gdiscl_disclose ~ f*gdiscl_do_emot
+                belong_class_comp4 ~ gdiscl_do_emot
+                belong_wfu_comp4 ~ gdiscl_do_emot
                 
                 #removing correlation between prompted disclosures
                 cdiscl_prompt_discl ~~ 0*gdiscl_do_emot 
                 '
 ```
 
-
-gender_identity_dich race_asian race_black race_hispanic 
-    race_multiracial 
+#### Testing the fit
 
 
 ```{r testing fit}
@@ -144,16 +142,17 @@ fit <- sem(model_1, data=Classroom_Experiences)
 summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
 ```
 
-
+#### Graphing!
 
 > This graph is kinda hideous, but it's what I've got for now. I don't like the model outputting in the smaller form, so I will usually pull it out of the chunk. 
 
 ```{r Path visualization}
-semPaths(fit, whatLabels="par", layout="tree", nodeLabels= c("Class Belonging", "WFU Belonging", "Class Disclosure", "Group Disclosure", "Group Prompted Disc", "Class Prompted Disc", "Multiracial", "Hispanic", "Black", "Asian", "Gender"),  sizeMan=12, sizeMan2=6)
+semPaths(fit, whatLabels="par", layout="tree", nCharNodes=0, sizeMan=12, sizeMan2=6)
 ```
 
 
->Currently unused code, but is used to ensure I can look at the original node names, so I want to keep it on hand. nCharNodes=0,
+>Currently unused code, because I don't have the time to swap the order. It was fine, and then the order swapped.
+nodeLabels= c("Class Belonging", "WFU Belonging", "Class Disclosure", "Group Disclosure", "Group Prompted Disc", "Class Prompted Disc", "Group Members Known", "Classmates Known", "Multiracial", "Hispanic", "Black", "Asian", "Gender")
 
 #### Bootstrapping
 
@@ -165,3 +164,9 @@ Bootstrapping is currently set to 1000 for the sake of time, not because it's wh
 fit <- sem(model_1, data=Classroom_Experiences, se="bootstrap", bootstrap = 1000)
 summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
 ```
+
+# What does the data mean?
+
+>This section will be used for me to write up what I've learned from the data analysis, as a point to reference the findings while I'm working later.
+
+We found that 
