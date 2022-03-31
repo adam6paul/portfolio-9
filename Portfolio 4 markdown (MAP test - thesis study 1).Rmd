@@ -1,0 +1,139 @@
+---
+title: "Thesis study 1"
+author: "Adam Paul"
+date: "3/24/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set-up
+
+The main packages I need are lavaan and lmertest, but semPlot is used to create a visual model.
+
+
+library('psych')
+library('reshape2')
+library('plyr')
+library('lavaan')
+library('Rcpp')
+library('lme4')
+library('lmerTest')
+library('OpenMx')
+library('semPlot')
+rm(list=ls())
+
+The current directory is from last semester, will need to change this for the new data
+
+```{r bringing in data}
+library(haven)
+Classroom_Experiences <- read_sav("~/Master's Program Wake Forest/Research/Online Belonging/FYP materials/Classroom Experiences Data 8-15-21.sav")
+View(Classroom_Experiences_Data_8_15_21)
+```
+
+## Data cleaning
+
+Will need to create composite variable for prompted disclosure out of two items.
+
+> Old data only had one question, so that is not done below. Will add this after finishing the path analysis code
+
+### Descriptives cleaning
+
+##### Race dummy coding
+
+##### Gender dummy coding
+
+### Variables of Interest
+
+##### Institutional belonging (belong_instit_comp4)
+
+
+##### Class belonging (belong_class_comp4)
+
+
+##### Class disclosure (cdiscl_disclose_comp3)
+
+
+##### Class prompted disclosure (cdiscl__prompt_comp2)
+
+
+#### Group disclosure (gdiscl_disclose_comp3)
+
+
+##### Group prompted disclosure (gdiscl_prompt_comp2)
+
+
+
+If I decide it's necessary, I will rename variables to make the models easy to think about here.
+
+
+------------------
+
+# MEDIATION MODELS
+
+------------------
+
+Reminder: Rules of thumb to evaluate goodness of fit: CFI/TLI > 0.95, RMSEA < 0.05, SRMR < 0.06  (Reference: Hu & Bentler, 1999)
+
+### References: 
+> http://davidakenny.net/cm/fit.htm
+ https://www.psychologie.uzh.ch/dam/jcr:ffffffff-b371-2797-0000-00000fda8f29/chisquare_diff_en.pdf
+ Chi-Square Distribution Table: http://sites.stat.psu.edu/~mga/401/tables/Chi-square-table.pdf
+ http://www.structuralequations.com/resources/Basic_lavaan_Syntax_Guide_Aug1_2013.pdf
+
+------------------
+
+# Current settings 
+
+------------------
+
+### Resampling 
+ Right now, bootstraps are set at 1000 resamples. This to make running the script not take impossibly long
+ When running final models, 10000 resamples would probably be preferred - but it'll take a while. 
+
+### Type of CIs
+ lavaan can handle four types of bootstrapped CIs; add "boot.ci.type = " to parameterEstimates
+ options for types are "norm", "basic", "perc" (percentile), and "bca.simple" 
+ defualt is "perc" (I think )
+
+### Significance Levels
+ alpha level for bootstrapping can be adjusted; add "level = " to parameterEstimates 
+ options for levels are e.g., "95", "99"
+
+------------------
+
+## Model time!
+
+------------------
+
+```{r model creation}
+model_1 <- ' #First direct effects
+              belong_class_comp4 ~ c*cdiscl_disclose
+              belong_wfu_comp4 ~ cdiscl_disclose
+              
+            #mediator for class
+              cdiscl_disclose ~ a*cdiscl_prompt_discl
+            
+            #group direct effect
+              belong_class_comp4 ~ d*gdiscl_disclose
+              belong_wfu_comp4 ~ gdiscl_disclose
+              
+            #mediator for group
+              gdiscl_disclose ~ b*gdiscl_do_emot
+              
+            #removing correlation between prompted disclosure
+              cdiscl_prompt_discl ~~ 0*gdiscl_do_emot
+                '
+```
+
+
+
+```{r testing fit}
+fit <- sem(model_1, data=Classroom_Experiences)
+
+summary(fit, fit.measures=TRUE, standardize=TRUE, rsquare=TRUE)
+
+semPaths(fit, whatLabels="par", layout="spring")
+```
