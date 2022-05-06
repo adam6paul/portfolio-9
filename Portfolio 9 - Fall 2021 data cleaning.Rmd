@@ -26,7 +26,7 @@ H3: Students in the disclosure condition will have higher scores on the quiz tha
 ## Set-up
 
 
-```{r loading packages}
+```{r loading packages, echo=TRUE, message=FALSE}
 library('reshape2')
 library('dplyr')
 library('Rcpp')
@@ -80,7 +80,7 @@ survey <- subset(survey, select= -c(StartDate, EndDate, Status,	IPAddress, Progr
                 RecipientEmail, ExternalReference, LocationLatitude, LocationLongitude,
                 DistributionChannel, UserLanguage))
 
-##### Data merge
+### Data merge
 
 ```{r survey 1 & 2 merge, echo=TRUE, collapse=TRUE, message=FALSE}
 study1 <- survey1 %>% 
@@ -611,9 +611,9 @@ study1$quiz_average <- round(study1$quiz_average, digits = 2)
 
 ```
 
-#### Manipulation check
 
-#### Manipulation check items
+
+#### Manipulation check
 
 We had three manipulation check items.
 
@@ -702,7 +702,7 @@ study1 <- study1 %>%
 
 Testing the reliability of the measure. Technically alpha gets masked by ggplot but I can just enable psych for a moment to override it.
 
-```{r institutional belonging Reliability}
+```{r institutional belonging reliability}
 alpha(study1[,c("school_belong", "school_outsiderR", "school_comfort", "school_fit_in")])
 
 ```
@@ -781,6 +781,12 @@ study1$motiv_util_comp3 <- rowMeans(study1[,c("moti_util_now", "moti_util_future
 ```
 
 
+
+### Saving data
+
+```{r saving data}
+write.csv(study1, file = "Fall_2021_data_R_cleaned.csv")
+```
 
 
 
