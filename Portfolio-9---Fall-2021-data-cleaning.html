@@ -196,8 +196,9 @@ summary {
 
 
 <blockquote>
-<p>The purpose of this portfolio is to have one final attempt at data cleaning within R. Specifically, I’ll work with the data from my project we ran in Fall 2021. The following passage is adapted from my thesis prospectus, which was written about this project.</p>
+<p>The purpose of this portfolio is to have one final attempt at data cleaning within R. Specifically, I’ll work with the data from my project we ran in Fall 2021.</p>
 </blockquote>
+<p>The following passage is adapted from my thesis prospectus, which was written about this project.</p>
 <p>The purpose of the study was to determine whether disclosure causally benefits students’ feelings of class and institutional belonging, their motivation, and their academic performance. To do this, I conducted a laboratory study designed to mimic an online course. Small groups comprised of 2-4 students from the same Introductory Psychology class were brought into the lab together to engage in a disclosure task with one another.</p>
 <p>In the experimental condition, I used an abbreviated version of the Fast Friends protocol (Aron et al., 1997), which employs questions of increasing intimacy. This was contrasted with a control condition which used similar procedures but with “small talk” questions that are not expected to yield quality, intimate disclosure. To mimic the experience of an online class, conversations occurred virtually via Zoom. Afterward, I measured students’ belonging, motivation, and performance. Finally, I had students take a brief quiz on research methods.</p>
 <p>I had three hypotheses:</p>
@@ -212,8 +213,8 @@ library(&#39;Rcpp&#39;)
 library(&#39;readr&#39;)
 library(&#39;tidyverse&#39;)
 library(&#39;psych&#39;)</code></pre>
-<div id="bringing-in-the-data" class="section level5">
-<h5>Bringing in the data</h5>
+<div id="bringing-in-the-data" class="section level3">
+<h3>Bringing in the data</h3>
 <p>This data was collected as a part of three different Qualtrics surveys, one that followed the manipulation, one that measured belonging, and a final one that contained the quiz.</p>
 <pre class="r"><code>survey1 &lt;- read_csv(&quot;data/Fall 2021 Survey 1.csv&quot;)
 
@@ -296,8 +297,8 @@ View(quiz)</code></pre>
 <p>As with Study 1 and 2, the data has already had its identifiers removed, but if it didn’t, here is where that would be done.</p>
 <p>survey &lt;- subset(survey, select= -c(StartDate, EndDate, Status, IPAddress, Progress, Finished, RecordedDate, ResponseId, Durationinseconds, RecipientLastName, RecipientFirstName, RecipientEmail, ExternalReference, LocationLatitude, LocationLongitude, DistributionChannel, UserLanguage))</p>
 </div>
-<div id="data-merge" class="section level5">
-<h5>Data merge</h5>
+<div id="data-merge" class="section level3">
+<h3>Data merge</h3>
 <pre class="r"><code>study1 &lt;- survey1 %&gt;% 
   full_join(survey2, by = &quot;participant_id&quot;)
 
@@ -356,8 +357,8 @@ View(study1)</code></pre>
 <div id="data-cleaning" class="section level3">
 <h3>Data cleaning!</h3>
 <p>Now that we have the data together, we can start cleaning it up. A big thing I learned from this is that consistency in naming makes everything easier (i.e., using study1 in my code consistently, and keeping consistent names like demog_XXX for demographics).</p>
-<div id="gender-dummy-coding" class="section level5">
-<h5>Gender dummy coding</h5>
+<div id="gender-dummy-coding" class="section level4">
+<h4>Gender dummy coding</h4>
 <p>First, I need to look at whether we have non-binary individuals in the dataset.</p>
 <p>Creating gender dummy codes that I can read easily helps down the line, similar to what I did in Study 2.</p>
 <p>Notably, I hadn’t changed the variable names to the standardized demog_XXX that I use later. I used demograph_XXX which is longer than needed. Fortunately, we were using the same numbering.</p>
@@ -407,8 +408,8 @@ count(demog_gender_trans, demog_gender_twospirit, demog_gender_genderqueer, demo
                 demog_gender_female == 1 ~ 0
                 ))</code></pre>
 </div>
-<div id="race-dummy-coding" class="section level5">
-<h5>Race dummy coding</h5>
+<div id="race-dummy-coding" class="section level4">
+<h4>Race dummy coding</h4>
 <p>Sadly, I once again have to correct my original code for demog vs demograph. I much prefer the former, but it’s a good task for looking over code and adapting it to what is essentially someone else’s (a much less code savvy me) code.</p>
 <p>To create the race dummy codes, I first need to create a multiracial composite so that I can avoid adding multiracial people to individual dummy codes.</p>
 <p>Because the individual race codes have NA in all unfilled spots, I need to replace them with 0’s to get the code to work correctly.</p>
@@ -538,8 +539,8 @@ study1 &lt;- study1 %&gt;%
         ))</code></pre>
 <p>Now I can make the composites! I used the find and replace function here for the first time.</p>
 </div>
-<div id="white-composite" class="section level5">
-<h5>White composite</h5>
+<div id="white-composite" class="section level4">
+<h4>White composite</h4>
 <p>Composed of individuals who identified as European/European American, Middle Eastern/Middle Eastern American, Other White; or demograph_race_51, demograph_race_52, and demograph_race_59.</p>
 <pre class="r"><code>study1 &lt;- study1 %&gt;%
         mutate(
@@ -556,8 +557,8 @@ study1 &lt;- study1 %&gt;%
           is.na(race_white) ~ 0 
           ))</code></pre>
 </div>
-<div id="black-composite" class="section level5">
-<h5>Black composite</h5>
+<div id="black-composite" class="section level4">
+<h4>Black composite</h4>
 <p>Composed of individuals who identified as African American/Black, African, Caribbean, Other Black; or demograph_race_21, demograph_race_22, demograph_race_23, and demograph_race_29</p>
 <pre class="r"><code>study1 &lt;- study1 %&gt;%
         mutate(
@@ -574,8 +575,8 @@ study1 &lt;- study1 %&gt;%
           is.na(race_black) ~ 0 
           ))</code></pre>
 </div>
-<div id="hispanic-composite" class="section level5">
-<h5>Hispanic composite</h5>
+<div id="hispanic-composite" class="section level4">
+<h4>Hispanic composite</h4>
 <p>Composed of individuals who identified as Mexican American/Chicano, Puerto Rican, Central American, Other Hispanic or Latino; or demograph_race_31, demograph_race_32, demograph_race_33, and demograph_race_39.</p>
 <pre class="r"><code>study1 &lt;- study1 %&gt;%
         mutate(
@@ -592,8 +593,8 @@ study1 &lt;- study1 %&gt;%
           is.na(race_hispanic) ~ 0 
           ))</code></pre>
 </div>
-<div id="asian-composite" class="section level5">
-<h5>Asian composite</h5>
+<div id="asian-composite" class="section level4">
+<h4>Asian composite</h4>
 <p>Composed of individuals who identified as East Asian (e.g., Chinese, Japanese, Korean, Taiwanese), Southeast Asian (e.g., Filipino, Vietnamese, Indonesian), South Asian (e.g., Pakistani, Indian, Nepalese, Sri Lankan), Other Asian; or demograph_race_11, demograph_race_12, demograph_race_13, and demograph_race_19.</p>
 <pre class="r"><code>study1 &lt;- study1 %&gt;%
         mutate(
@@ -610,8 +611,8 @@ study1 &lt;- study1 %&gt;%
           is.na(race_asian) ~ 0 
           ))</code></pre>
 </div>
-<div id="native-composite" class="section level5">
-<h5>Native composite</h5>
+<div id="native-composite" class="section level4">
+<h4>Native composite</h4>
 <p>Composed of individuals who identified as Native Hawaiian or Other Pacific Islander, American Indian or Alaskan Native; or demograph_race_41 and demograph_race_42.</p>
 <pre class="r"><code>study1 &lt;- study1 %&gt;%
         mutate(
@@ -627,7 +628,7 @@ study1 &lt;- study1 %&gt;%
           race_native == 0 ~ 0,
           is.na(race_native) ~ 0 
           ))</code></pre>
-<p>With these composites in hand, I can look more closely at how many we have in each category</p>
+<p>With these composites in hand, I can look more closely at how many we have in each category.</p>
 <pre class="r"><code>table(study1$race_white)
 ## 
 ##   0   1 
@@ -654,8 +655,9 @@ table(study1$race_multiracial)
 ## 1</code></pre>
 <p>There are 152 white participants, 27 Asian, 16 Hispanic, 8 black, 3 native, and no multiracial participants, meaning I can leave multiracial out of the code in Portfolio 10.</p>
 </div>
-<div id="quiz-recoding" class="section level4">
-<h4>Quiz recoding</h4>
+</div>
+<div id="quiz-recoding" class="section level3">
+<h3>Quiz recoding</h3>
 <p>We need to create dummy coded scores for the quiz, so I can get an average more easily. There’s also one more question than in Study 2.</p>
 <pre class="r"><code>#Question 1
 study1 &lt;- study1 %&gt;%
@@ -818,14 +820,11 @@ study1 &lt;- study1 %&gt;%
 
 study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 </div>
-<div id="manipulation-check" class="section level4">
-<h4>Manipulation check</h4>
-</div>
-<div id="manipulation-check-items" class="section level4">
-<h4>Manipulation check items</h4>
+<div id="manipulation-check" class="section level3">
+<h3>Manipulation check</h3>
 <p>We had three manipulation check items.</p>
-<div id="disclosure" class="section level5">
-<h5>Disclosure</h5>
+<div id="disclosure" class="section level4">
+<h4>Disclosure</h4>
 <p>The first manipulation check item asked about how much the participants believed the questions asked them to disclose, consisting of two items: “Manip_intimacy” and “manip_thoughtful”.</p>
 <p>First, we should check the reliability.</p>
 <pre class="r"><code>alpha(study1[,c(&quot;Manip_intimacy&quot;, &quot;manip_thoughtful&quot;)])</code></pre>
@@ -858,8 +857,8 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 <pre class="r"><code>study1$manip_check_comp2 &lt;- rowMeans(study1[,c(&quot;Manip_intimacy&quot;, &quot;manip_thoughtful&quot;)], 
                               na.rm=TRUE)</code></pre>
 </div>
-<div id="self-disclosure" class="section level5">
-<h5>Self-disclosure</h5>
+<div id="self-disclosure" class="section level4">
+<h4>Self-disclosure</h4>
 <p>The next manipulation check item asked about participants’ actual levels of disclosure, consisting of three items: group_tell, group_intimate, group_honest, and group_know. These are terrible names compared to the ones we used in my thesis.</p>
 <p>Checking the reliability.</p>
 <pre class="r"><code>alpha(study1[,c(&quot;group_tell&quot;, &quot;group_intimate&quot;, &quot;group_honest&quot;, &quot;group_know&quot;)])</code></pre>
@@ -899,8 +898,8 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 <pre class="r"><code>study1$self_disclosure_comp4 &lt;- rowMeans(study1[,c(&quot;group_tell&quot;, &quot;group_intimate&quot;, &quot;group_honest&quot;, &quot;group_know&quot;)], 
                               na.rm=TRUE)</code></pre>
 </div>
-<div id="group-disclosure" class="section level5">
-<h5>Group disclosure</h5>
+<div id="group-disclosure" class="section level4">
+<h4>Group disclosure</h4>
 <p>The final manipulation check item asked about participants’ beliefs about their group members’ level of disclosure, consisting of three similar items to self-disclosure: group_other_tell, group_other_share, group_other_honest, and group_other_know.</p>
 <p>Checking the reliability.</p>
 <pre class="r"><code>alpha(study1[,c(&quot;group_other_tell&quot;, &quot;group_other_share&quot;, &quot;group_other_honest&quot;, &quot;group_other_know&quot;)])</code></pre>
@@ -946,7 +945,6 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
                               na.rm=TRUE)</code></pre>
 </div>
 </div>
-</div>
 <div id="variables-of-interest" class="section level3">
 <h3>Variables of interest</h3>
 <div id="institutional-belonging" class="section level4">
@@ -956,7 +954,7 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 <pre class="r"><code>study1 &lt;- study1 %&gt;%
         mutate(school_outsiderR= 8- school_outsider
                               )</code></pre>
-<p>Testing the reliability of the measure. Technically alpha gets masked by ggplot but I can just enable psych for a moment to override it.</p>
+<p>Testing the reliability of the measure.</p>
 <pre class="r"><code>alpha(study1[,c(&quot;school_belong&quot;, &quot;school_outsiderR&quot;, &quot;school_comfort&quot;, &quot;school_fit_in&quot;)])</code></pre>
 <pre><code>## 
 ## Reliability analysis   
@@ -1005,6 +1003,7 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 <pre class="r"><code>study1 &lt;- study1 %&gt;%
         mutate(class_outsiderR= 8- class_outsider
         )</code></pre>
+<p>Testing the reliability.</p>
 <pre class="r"><code>alpha(study1[,c(&quot;class_belong&quot;, &quot;class_outsiderR&quot;, &quot;class_comfort&quot;, &quot;class_fit_in&quot;)])</code></pre>
 <pre><code>## 
 ## Reliability analysis   
@@ -1041,11 +1040,12 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 <pre class="r"><code>study1$class_belong_comp4 &lt;- rowMeans(study1[,c(&quot;class_belong&quot;, &quot;class_outsiderR&quot;, &quot;class_comfort&quot;, &quot;class_fit_in&quot;)], 
                               na.rm=TRUE)</code></pre>
 </div>
-<div id="subject-area-motivation" class="section level4">
-<h4>Subject Area motivation</h4>
+</div>
+<div id="subject-area-motivation" class="section level3">
+<h3>Subject Area motivation</h3>
 <p>We asked about subject area motivation in two ways: intrinsic motivation and utility motivation.</p>
-<div id="intrinsic-motivation" class="section level5">
-<h5>Intrinsic motivation</h5>
+<div id="intrinsic-motivation" class="section level4">
+<h4>Intrinsic motivation</h4>
 <p>The intrinsic motivation construct is made of two items: moti_intris_interest and moti_intris_like.</p>
 <pre class="r"><code>alpha(study1[,c(&quot;moti_intris_interest&quot;, &quot;moti_intris_like&quot;)])</code></pre>
 <pre><code>## 
@@ -1079,9 +1079,9 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 <pre class="r"><code>study1$motiv_intrins_comp2 &lt;- rowMeans(study1[,c(&quot;moti_intris_interest&quot;, &quot;moti_intris_like&quot;)], 
                               na.rm=TRUE)</code></pre>
 </div>
-<div id="utility-motivation" class="section level5">
-<h5>Utility motivation</h5>
-<p>The utility motivation construct is made of three items: moti_util_now, moti_util_future, and moti_util_grad</p>
+<div id="utility-motivation" class="section level4">
+<h4>Utility motivation</h4>
+<p>The utility motivation construct is made of three items: moti_util_now, moti_util_future, and moti_util_grad.</p>
 <pre class="r"><code>alpha(study1[,c(&quot;moti_util_now&quot;, &quot;moti_util_future&quot;, &quot;moti_util_grad&quot;)])</code></pre>
 <pre><code>## 
 ## Reliability analysis   
@@ -1113,12 +1113,17 @@ study1$quiz_average &lt;- round(study1$quiz_average, digits = 2)</code></pre>
 <p>Reliability is .91</p>
 <pre class="r"><code>study1$motiv_util_comp3 &lt;- rowMeans(study1[,c(&quot;moti_util_now&quot;, &quot;moti_util_future&quot;, &quot;moti_util_grad&quot;)], 
                               na.rm=TRUE)</code></pre>
+<p>With those created, we’re ready to save the data so that I can begin analyses.</p>
 </div>
 </div>
+<div id="saving-data" class="section level3">
+<h3>Saving data</h3>
+<pre class="r"><code>write.csv(study1, file = &quot;Fall_2021_data_R_cleaned.csv&quot;)</code></pre>
 </div>
 </div>
 <div id="finishing-up" class="section level2">
 <h2>Finishing up</h2>
+<p>The main thing I got out of this portfolio is that I was really bad at naming variables when I collected this data. Giving consistent and easy to repeat names is a big deal, and I was definitely not very good at it.</p>
 </div>
 
 

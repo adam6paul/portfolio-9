@@ -9,7 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-> The purpose of this portfolio is to have one final attempt at data cleaning within R. Specifically, I'll work with the data from my project we ran in Fall 2021. The following passage is adapted from my thesis prospectus, which was written about this project.
+> The purpose of this portfolio is to have one final attempt at data cleaning within R. Specifically, I'll work with the data from my project we ran in Fall 2021. 
+
+The following passage is adapted from my thesis prospectus, which was written about this project.
 
 The purpose of the study was to determine whether disclosure causally benefits students’ feelings of class and institutional belonging, their motivation, and their academic performance. To do this, I conducted a laboratory study designed to mimic an online course. Small groups comprised of 2-4 students from the same Introductory Psychology class were brought into the lab together to engage in a disclosure task with one another. 
 
@@ -35,7 +37,7 @@ library('tidyverse')
 library('psych')
 ```
 
-##### Bringing in the data
+### Bringing in the data
 
 This data was collected as a part of three different Qualtrics surveys, one that followed the manipulation, one that measured belonging, and a final one that contained the quiz.
 
@@ -107,7 +109,7 @@ View(study1)
 Now that we have the data together, we can start cleaning it up. A big thing I learned from this is that consistency in naming makes everything easier (i.e., using study1 in my code consistently, and keeping consistent names like demog_XXX for demographics).
 
 
-##### Gender dummy coding
+#### Gender dummy coding
 
 First, I need to look at whether we have non-binary individuals in the dataset.
 
@@ -162,7 +164,7 @@ study1 <- study1 %>%
                 ))
 ```
 
-##### Race dummy coding
+#### Race dummy coding
 
 Sadly, I once again have to correct my original code for demog vs demograph. I much prefer the former, but it's a good task for looking over code and adapting it to what is essentially someone else's (a much less code savvy me) code.
 
@@ -313,7 +315,7 @@ Now I can make the composites! I used the find and replace function here for the
 
 
 
-##### White composite
+#### White composite
 
 Composed of individuals who identified as European/European American, Middle Eastern/Middle Eastern American, Other White; or demograph_race_51, demograph_race_52, and demograph_race_59.
 
@@ -335,7 +337,7 @@ study1 <- study1 %>%
 
 ```
 
-##### Black composite
+#### Black composite
 
 Composed of individuals who identified as African American/Black, African, Caribbean, Other Black; or demograph_race_21, demograph_race_22, demograph_race_23, and demograph_race_29
 
@@ -357,7 +359,7 @@ study1 <- study1 %>%
 
 ```
 
-##### Hispanic composite
+#### Hispanic composite
 
 Composed of individuals who identified as Mexican American/Chicano, Puerto Rican, Central American, Other Hispanic or Latino; or demograph_race_31, demograph_race_32, demograph_race_33, and demograph_race_39.
 
@@ -379,7 +381,7 @@ study1 <- study1 %>%
 
 ```
 
-##### Asian composite
+#### Asian composite
 
 Composed of individuals who identified as East Asian (e.g., Chinese, Japanese, Korean, Taiwanese), Southeast Asian (e.g., Filipino, Vietnamese, Indonesian), South Asian (e.g., Pakistani, Indian, Nepalese, Sri Lankan), Other Asian; or demograph_race_11, demograph_race_12, demograph_race_13, and demograph_race_19.
 
@@ -402,7 +404,7 @@ study1 <- study1 %>%
 
 ```
 
-##### Native composite
+#### Native composite
 
 Composed of individuals who identified as Native Hawaiian or Other Pacific Islander, American Indian or Alaskan Native; or demograph_race_41 and demograph_race_42.
 
@@ -425,7 +427,7 @@ study1 <- study1 %>%
 
 ```
 
-With these composites in hand, I can look more closely at how many we have in each category
+With these composites in hand, I can look more closely at how many we have in each category.
 
 ```{r freq race, collapse=TRUE}
 table(study1$race_white)
@@ -438,7 +440,7 @@ table(study1$race_multiracial)
 
 There are 152 white participants, 27 Asian, 16 Hispanic, 8 black, 3 native, and no multiracial participants, meaning I can leave multiracial out of the code in Portfolio 10.
 
-#### Quiz recoding
+### Quiz recoding
 
 We need to create dummy coded scores for the quiz, so I can get an average more easily. There's also one more question than in Study 2.
 
@@ -613,12 +615,12 @@ study1$quiz_average <- round(study1$quiz_average, digits = 2)
 
 
 
-#### Manipulation check
+### Manipulation check
 
 We had three manipulation check items.
 
 
-##### Disclosure
+#### Disclosure
 
 The first manipulation check item asked about how much the participants believed the questions asked them to disclose, consisting of two items: "Manip_intimacy" and "manip_thoughtful".
 
@@ -640,7 +642,7 @@ study1$manip_check_comp2 <- rowMeans(study1[,c("Manip_intimacy", "manip_thoughtf
 ```
 
 
-##### Self-disclosure
+#### Self-disclosure
 
 The next manipulation check item asked about participants' actual levels of disclosure, consisting of three items: group_tell, group_intimate, group_honest, and group_know. These are terrible names compared to the ones we used in my thesis.
 
@@ -662,7 +664,7 @@ study1$self_disclosure_comp4 <- rowMeans(study1[,c("group_tell", "group_intimate
 ```
 
 
-##### Group disclosure
+#### Group disclosure
 
 The final manipulation check item asked about participants' beliefs about their group members' level of disclosure, consisting of three similar items to self-disclosure: group_other_tell, group_other_share, group_other_honest, and group_other_know.
 
@@ -700,7 +702,7 @@ study1 <- study1 %>%
                               )
 ```
 
-Testing the reliability of the measure. Technically alpha gets masked by ggplot but I can just enable psych for a moment to override it.
+Testing the reliability of the measure.
 
 ```{r institutional belonging reliability}
 alpha(study1[,c("school_belong", "school_outsiderR", "school_comfort", "school_fit_in")])
@@ -730,6 +732,8 @@ study1 <- study1 %>%
 
 ```
 
+Testing the reliability.
+
 ```{r class belonging reliability}
 alpha(study1[,c("class_belong", "class_outsiderR", "class_comfort", "class_fit_in")])
 ```
@@ -743,12 +747,12 @@ study1$class_belong_comp4 <- rowMeans(study1[,c("class_belong", "class_outsiderR
 
 
 
-#### Subject Area motivation
+### Subject Area motivation
 
 We asked about subject area motivation in two ways: intrinsic motivation and utility motivation.
 
 
-##### Intrinsic motivation
+#### Intrinsic motivation
 
 The intrinsic motivation construct is made of two items: moti_intris_interest and moti_intris_like.
 
@@ -765,9 +769,9 @@ study1$motiv_intrins_comp2 <- rowMeans(study1[,c("moti_intris_interest", "moti_i
 
 
 
-##### Utility motivation
+#### Utility motivation
 
-The utility motivation construct is made of three items: moti_util_now, moti_util_future, and moti_util_grad
+The utility motivation construct is made of three items: moti_util_now, moti_util_future, and moti_util_grad.
 
 ```{r utility motivation reliability}
 alpha(study1[,c("moti_util_now", "moti_util_future", "moti_util_grad")])
@@ -780,7 +784,7 @@ study1$motiv_util_comp3 <- rowMeans(study1[,c("moti_util_now", "moti_util_future
                               na.rm=TRUE)
 ```
 
-
+With those created, we're ready to save the data so that I can begin analyses.
 
 ### Saving data
 
@@ -790,5 +794,7 @@ write.csv(study1, file = "Fall_2021_data_R_cleaned.csv")
 
 
 
-
 ## Finishing up
+
+The main thing I got out of this portfolio is that I was really bad at naming variables when I collected this data. Giving consistent and easy to repeat names is a big deal, and I was definitely not very good at it.
+
